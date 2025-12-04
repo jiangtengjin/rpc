@@ -1,0 +1,4 @@
+rpc:
+  name: rpc
+  version: 2.1
+  serverPort: 8082
