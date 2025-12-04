@@ -5,9 +5,9 @@ import com.xhh.example.common.service.UserService;
 import com.xhh.rpc.proxy.ServiceProxyFactory;
 
 /**
- * 简易服务消费者示例
+ * 服务消费者示例
  */
-public class EasyConsumerExample {
+public class ConsumerExample {
 
     public static void main(String[] args) {
         // 需要获取 userService 的实现类对象（静态代理）
@@ -21,6 +21,8 @@ public class EasyConsumerExample {
         } else {
             System.out.println("user == null");
         }
+        short number = userService.getNumber();
+        System.out.println("number = " + number);
     }
 
 }
