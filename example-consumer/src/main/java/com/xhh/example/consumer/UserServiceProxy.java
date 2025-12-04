@@ -4,9 +4,9 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import com.xhh.example.common.model.User;
 import com.xhh.example.common.service.UserService;
-import com.xhh.rpc.easy.model.RpcRequest;
-import com.xhh.rpc.easy.model.RpcResponse;
-import com.xhh.rpc.easy.serializer.JdkSerializer;
+import com.xhh.rpc.model.RpcRequest;
+import com.xhh.rpc.model.RpcResponse;
+import com.xhh.rpc.serializer.JdkSerializer;
 
 import java.io.IOException;
 
