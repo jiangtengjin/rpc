@@ -1,7 +1,9 @@
 package com.xhh.rpc.server;
 
 import io.vertx.core.Vertx;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class VertxHttpServer implements HttpServer{
     @Override
     public void doStart(int port) {
@@ -17,10 +19,10 @@ public class VertxHttpServer implements HttpServer{
         // 启动 http 服务器并监听指定端口
         server.listen(port)
                 .onSuccess(s ->{
-                    System.out.println("HTTP server started on port " + server.actualPort());
+                    log.info("HTTP server started on port：{}", server.actualPort());
                 })
                 .onFailure(failure -> {
-                    System.out.println("Failed to start HTTP server: " + failure.getMessage());
+                    log.info("Failed to start HTTP server: {}", failure.getMessage());
                 });
     }
 }
