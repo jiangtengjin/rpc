@@ -3,4 +3,4 @@ rpc:
   version: 2.1
   serverPort: 8082
   mock: false # 开启 mock
-  serializer: hessian # 序列化方式
+  serializer: kryo # 序列化方式
