@@ -2,4 +2,5 @@ rpc:
   name: rpc
   version: 2.1
   serverPort: 8082
-  mock: true # 开启 mock
+  mock: false # 开启 mock
+  serializer: hessian # 序列化方式

@@ -1,9 +1,11 @@
 package com.xhh.rpc.server;
 
+import com.xhh.rpc.RpcApplication;
 import com.xhh.rpc.model.RpcRequest;
 import com.xhh.rpc.model.RpcResponse;
 import com.xhh.rpc.register.LocalRegister;
-import com.xhh.rpc.serializer.JdkSerializer;
+import com.xhh.rpc.serializer.Serializer;
+import com.xhh.rpc.serializer.SerializerFactory;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
@@ -29,7 +31,7 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
     @Override
     public void handle(HttpServerRequest request) {
         // 指定序列化器
-        final JdkSerializer serializer = new JdkSerializer();
+        final Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
 
         // 记录日志
         System.out.println("Request received: " + request.path() + " " + request.uri());
@@ -80,7 +82,7 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
      * @param rpcResponse       rpc 响应
      * @param serializer        序列化器
      */
-    private void doResponse(HttpServerRequest request, RpcResponse rpcResponse, JdkSerializer serializer) {
+    private void doResponse(HttpServerRequest request, RpcResponse rpcResponse, Serializer serializer) {
         HttpServerResponse httpServerResponse = request.response().putHeader("content-type", "application/json");
 
         try {
