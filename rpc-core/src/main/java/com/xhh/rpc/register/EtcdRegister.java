@@ -23,8 +23,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EtcdRegister implements Register{
 
+    /**
+     * etcd 客户端
+     */
     private Client client;
 
+    /**
+     * etcd 的 k - v客户端，用于操作键值对
+     */
     private KV kvClient;
 
     /**
@@ -38,9 +44,15 @@ public class EtcdRegister implements Register{
     private final Set<String> localRegisterNodeKeySet = new HashSet<>();
 
     /**
-     * 注册中心服务本地缓存
+     * 注册中心服务本地缓存（只支持单个服务缓存，已废弃，请使用下方的 registryMultiServiceCache）
      */
+    @Deprecated
     private final RegistryServiceCache registryServiceCache = new RegistryServiceCache();
+
+    /**
+     * 注册中心服务本地缓存（支持多个服务缓存）
+     */
+    private final RegistryMultiServiceCache registryMultiServiceCache = new RegistryMultiServiceCache();
 
     /**
      * 正在监听的 key 集合
@@ -59,7 +71,7 @@ public class EtcdRegister implements Register{
                         // key 删除时触发
                         case DELETE:
                             // 清理注册服务缓存
-                            registryServiceCache.clearCache();
+                            registryMultiServiceCache.clearCache(serviceNodeKey);
                             break;
                         case PUT:
                         default:
@@ -143,7 +155,7 @@ public class EtcdRegister implements Register{
     @Override
     public List<ServiceMetaInfo> discovery(String serviceKey) {
         // 优先从缓存中获取服务
-        List<ServiceMetaInfo> serviceMetaInfos = registryServiceCache.readCache();
+        List<ServiceMetaInfo> serviceMetaInfos = registryMultiServiceCache.readCache(serviceKey);
         if (CollUtil.isNotEmpty(serviceMetaInfos)) {
             log.info("发现缓存，直接从缓存中获取服务。。。。");
             return serviceMetaInfos;
@@ -173,7 +185,7 @@ public class EtcdRegister implements Register{
                     .collect(Collectors.toList());
 
             // 写入缓存
-            registryServiceCache.writeCache(serviceList);
+            registryMultiServiceCache.writeCache(serviceKey, serviceList);
             return serviceList;
         } catch (Exception e) {
             throw new RuntimeException("获取服务列表失败", e);
