@@ -11,6 +11,12 @@ import java.util.List;
 public interface Register {
 
     /**
+     * 监听（消费端）
+     * @param serviceNodeKey
+     */
+    void watch(String serviceNodeKey);
+
+    /**
      * 初始化
      *
      * @param registryConfig    注册中心配置

@@ -1,6 +1,7 @@
 package com.xhh.rpc.register;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.cron.CronUtil;
 import cn.hutool.cron.task.Task;
 import cn.hutool.json.JSONUtil;
@@ -9,6 +10,7 @@ import com.xhh.rpc.model.ServiceMetaInfo;
 import io.etcd.jetcd.*;
 import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.options.PutOption;
+import io.etcd.jetcd.watch.WatchEvent;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
@@ -34,6 +36,39 @@ public class EtcdRegister implements Register{
      * 本机注册的节点 key 集合（用于维护续期）
      */
     private final Set<String> localRegisterNodeKeySet = new HashSet<>();
+
+    /**
+     * 注册中心服务本地缓存
+     */
+    private final RegistryServiceCache registryServiceCache = new RegistryServiceCache();
+
+    /**
+     * 正在监听的 key 集合
+     */
+    private final Set<String> watchingKeySet = new ConcurrentHashSet<>();
+
+    @Override
+    public void watch(String serviceNodeKey) {
+        Watch watchClient = client.getWatchClient();
+        // 之前未被监听，开启监听
+        boolean newWatch = watchingKeySet.add(serviceNodeKey);
+        if (newWatch) {
+            watchClient.watch(ByteSequence.from(serviceNodeKey, StandardCharsets.UTF_8), response -> {
+                for (WatchEvent event : response.getEvents()) {
+                    switch (event.getEventType()) {
+                        // key 删除时触发
+                        case DELETE:
+                            // 清理注册服务缓存
+                            registryServiceCache.clearCache();
+                            break;
+                        case PUT:
+                        default:
+                            break;
+                    }
+                }
+            });
+        }
+    }
 
     @Override
     public void init(RegistryConfig registryConfig) {
@@ -107,6 +142,13 @@ public class EtcdRegister implements Register{
 
     @Override
     public List<ServiceMetaInfo> discovery(String serviceKey) {
+        // 优先从缓存中获取服务
+        List<ServiceMetaInfo> serviceMetaInfos = registryServiceCache.readCache();
+        if (CollUtil.isNotEmpty(serviceMetaInfos)) {
+            log.info("发现缓存，直接从缓存中获取服务。。。。");
+            return serviceMetaInfos;
+        }
+        log.info("不存在缓存，从注册中心获取服务。。。。");
         // 前缀搜索，结尾一定要加 '/'
         String searchPrefix = ETCD_ROOT_PATH + serviceKey;
 
@@ -120,12 +162,19 @@ public class EtcdRegister implements Register{
                     .getKvs();
 
             // 解析服务信息
-            return kvs.stream()
+            List<ServiceMetaInfo> serviceList = kvs.stream()
                     .map(kv -> {
+                        String key = kv.getKey().toString(StandardCharsets.UTF_8);
+                        // 监听 key 的变化
+                        watch(key);
                         String value = kv.getValue().toString(StandardCharsets.UTF_8);
                         return JSONUtil.toBean(value, ServiceMetaInfo.class);
                     })
                     .collect(Collectors.toList());
+
+            // 写入缓存
+            registryServiceCache.writeCache(serviceList);
+            return serviceList;
         } catch (Exception e) {
             throw new RuntimeException("获取服务列表失败", e);
         }
