@@ -26,6 +26,11 @@ public interface Register {
     void registry(ServiceMetaInfo serviceMetaInfo) throws Exception;
 
     /**
+     * 心跳检测
+     */
+    void heartBeat();
+
+    /**
      * 注销服务
      *
      * @param serviceMetaInfo   服务元信息

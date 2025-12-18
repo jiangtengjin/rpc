@@ -10,10 +10,12 @@ import com.xhh.rpc.register.Register;
 import com.xhh.rpc.register.RegisterFactory;
 import com.xhh.rpc.server.HttpServer;
 import com.xhh.rpc.server.VertxHttpServer;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 服务提供者示例
  */
+@Slf4j
 public class ProviderExample {
 
     public static void main(String[] args) {
@@ -34,7 +36,9 @@ public class ProviderExample {
         serviceMetaInfo.setPort(rpcConfig.getServerPort());
         try {
             register.registry(serviceMetaInfo);
+            log.info("服务：{} 注册成功！", serviceMetaInfo.getServiceAddress());
         } catch (Exception e) {
+            log.error("服务：{} 注册失败！", serviceMetaInfo.getServiceAddress(), e);
             throw new RuntimeException(e);
         }
 

@@ -20,6 +20,14 @@ public class RegisterTest {
     }
 
     @Test
+    public void heartBeat() throws Exception {
+        // init 方法中已经执行心跳检测了
+        testRegistry();
+        // 阻塞 1 分钟
+        Thread.sleep(60 * 1000L);
+    }
+
+    @Test
     public void testRegistry() throws Exception {
         ServiceMetaInfo serviceMetaInfo = new ServiceMetaInfo();
         serviceMetaInfo.setName("myService");
