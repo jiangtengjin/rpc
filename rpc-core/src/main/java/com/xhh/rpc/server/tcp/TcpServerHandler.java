@@ -19,9 +19,8 @@ import java.lang.reflect.Method;
 public class TcpServerHandler implements Handler<NetSocket> {
 
     @Override
-    public void handle(NetSocket netSocket) {
-        // 处理连接
-        netSocket.handler(buffer -> {
+    public void handle(NetSocket socket) {
+        TcpBufferHandlerWrapper bufferHandlerWrapper = new TcpBufferHandlerWrapper(buffer -> {
             // 接收请求，解码
             ProtocolMessage<RpcRequest> protocolMessage;
             try {
@@ -55,10 +54,11 @@ public class TcpServerHandler implements Handler<NetSocket> {
             ProtocolMessage<RpcResponse> responseProtocolMessage = new ProtocolMessage<>(header, response);
             try {
                 Buffer encodeBuffer = ProtocolMessageEncoder.encode(responseProtocolMessage);
-                netSocket.write(encodeBuffer);
+                socket.write(encodeBuffer);
             } catch (IOException e) {
                 throw new RuntimeException("Encode message of protocol error", e);
             }
         });
+        socket.handler(bufferHandlerWrapper);
     }
 }

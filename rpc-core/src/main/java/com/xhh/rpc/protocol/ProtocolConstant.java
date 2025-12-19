@@ -20,4 +20,14 @@ public interface ProtocolConstant {
      */
     byte PROTOCOL_VERSION = 0x1;
 
+    // ================= 消息头相关索引 ====================
+    int MAGIC_INDEX = 0;
+    int VERSION_INDEX = 1;
+    int SERIALIZER_INDEX = 2;
+    int TYPE_INDEX = 3;
+    int STATUS_INDEX = 4;
+    int REQUEST_ID_INDEX = 5;
+    int BODY_LENGTH_INDEX = 13;
+
+
 }
