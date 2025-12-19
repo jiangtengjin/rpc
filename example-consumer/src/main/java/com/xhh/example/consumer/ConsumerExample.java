@@ -16,13 +16,6 @@ public class ConsumerExample {
         user.setName("张三");
         // 调用
         User newUser = userService.getUser(user);
-        newUser = userService.getUser(user);
-        try {
-            Thread.sleep(10 * 1000L);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        newUser = userService.getUser(user);
         if (newUser != null) {
             System.out.println("用户名：" + newUser.getName());
         } else {

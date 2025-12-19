@@ -8,8 +8,7 @@ import com.xhh.rpc.model.ServiceMetaInfo;
 import com.xhh.rpc.register.LocalRegister;
 import com.xhh.rpc.register.Register;
 import com.xhh.rpc.register.RegisterFactory;
-import com.xhh.rpc.server.HttpServer;
-import com.xhh.rpc.server.VertxHttpServer;
+import com.xhh.rpc.server.tcp.VertxTcpServer;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -42,9 +41,9 @@ public class ProviderExample {
             throw new RuntimeException(e);
         }
 
-        // 启动 web 服务
-        HttpServer httpServer = new VertxHttpServer();
-        httpServer.doStart(rpcConfig.getServerPort());
+        // 启动 web 服务（使用 tcp 协议）
+        VertxTcpServer server = new VertxTcpServer();
+        server.doStart(rpcConfig.getServerPort());
     }
 
 }
