@@ -1,4 +1,6 @@
 rpc:
+  serverHost: localhost
+  serverPort: 8081
   serializer: kryo # 序列化方式
 #  registryConfig:
 #    type: zookeeper # 注册中心类型
