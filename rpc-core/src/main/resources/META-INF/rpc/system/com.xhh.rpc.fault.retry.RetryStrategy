@@ -1,0 +1,5 @@
+no=com.xhh.rpc.fault.retry.NoRetryStrategy
+fixedInterval=com.xhh.rpc.fault.retry.FixedIntervalRetryStrategy
+randomWait=com.xhh.rpc.fault.retry.RandomWaitRetryStrategy
+incrementingWait=com.xhh.rpc.fault.retry.IncrementingWaitRetryStrategy
+exponentialWait=com.xhh.rpc.fault.retry.ExponentialWaitRetryStrategy

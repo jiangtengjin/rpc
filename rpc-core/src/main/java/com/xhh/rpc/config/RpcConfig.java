@@ -1,5 +1,6 @@
 package com.xhh.rpc.config;
 
+import com.xhh.rpc.fault.retry.RetryStrategyKeys;
 import com.xhh.rpc.loadbalancer.LoadBalancerKeys;
 import com.xhh.rpc.serializer.SerializerKeys;
 import lombok.Data;
@@ -49,5 +50,10 @@ public class RpcConfig {
      * 负载均衡器
      */
     private String loadBalancer = LoadBalancerKeys.ROUND_ROBIN;
+
+    /**
+     * 重试策略
+     */
+    private String retryPolicy = RetryStrategyKeys.NO;
 
 }
