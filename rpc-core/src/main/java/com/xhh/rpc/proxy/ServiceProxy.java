@@ -6,6 +6,8 @@ import com.xhh.rpc.config.RpcConfig;
 import com.xhh.rpc.constant.RpcConstant;
 import com.xhh.rpc.fault.retry.RetryStrategy;
 import com.xhh.rpc.fault.retry.RetryStrategyFactory;
+import com.xhh.rpc.fault.tolerant.TolerantStrategy;
+import com.xhh.rpc.fault.tolerant.TolerantStrategyFactory;
 import com.xhh.rpc.loadbalancer.LoadBalancer;
 import com.xhh.rpc.loadbalancer.LoadBalancerFactory;
 import com.xhh.rpc.model.RpcRequest;
@@ -57,11 +59,22 @@ public class ServiceProxy implements InvocationHandler {
             log.info("selected service: {}", selectedService);
 
             // 使用重试机制
-            RetryStrategy retryStrategy = RetryStrategyFactory.getInstance(rpcConfig.getRetryPolicy());
-            RpcResponse response = retryStrategy.doRetry(() ->
-                    // 发送 TCP 请求
-                    VertxTcpClient.doRequest(rpcRequest, selectedService)
-            );
+            RetryStrategy retryStrategy = RetryStrategyFactory.getInstance(rpcConfig.getRetryStrategy());
+            RpcResponse response;
+            try {
+                response = retryStrategy.doRetry(() ->
+                        // 发送 TCP 请求
+                        VertxTcpClient.doRequest(rpcRequest, selectedService)
+                );
+            } catch (Exception e) {
+                // 当重试后还是失败，则使用容错机制
+                TolerantStrategy tolerantStrategy = TolerantStrategyFactory.getInstance(rpcConfig.getTolerantStrategy());
+                HashMap<String, Object> context = new HashMap<>();
+                context.put("request", rpcRequest);
+                context.put("serviceList", serviceList);
+                context.put("currentService", selectedService);
+                response = tolerantStrategy.doTolerant(context, e);
+            }
             return response.getData();
         } catch (Exception e) {
             throw new RuntimeException("Request error", e);

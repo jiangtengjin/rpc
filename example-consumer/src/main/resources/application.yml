@@ -4,6 +4,7 @@ rpc:
   serverPort: 8082
   mock: false # 开启 mock
   serializer: kryo # 序列化方式
+  retryStrategy: exponentialWait # 重试策略
 #  registryConfig:
 #    type: zookeeper # 注册中心类型
 #    address: localhost:2181 # 注册中心地址

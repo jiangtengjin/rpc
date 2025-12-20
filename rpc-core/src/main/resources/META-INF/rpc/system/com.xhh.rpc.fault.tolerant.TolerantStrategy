@@ -1,0 +1,4 @@
+failOver=com.xhh.rpc.fault.tolerant.FailOverTolerantStrategy
+failBack=com.xhh.rpc.fault.tolerant.FailBackTolerantStrategy
+failSave=com.xhh.rpc.fault.tolerant.FailSaveTolerantStrategy
+failFast=com.xhh.rpc.fault.tolerant.FailFastTolerantStrategy
