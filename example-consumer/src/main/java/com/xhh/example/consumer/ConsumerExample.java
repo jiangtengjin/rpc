@@ -15,11 +15,13 @@ public class ConsumerExample {
         User user = new User();
         user.setName("张三");
         // 调用
-        User newUser = userService.getUser(user);
-        if (newUser != null) {
-            System.out.println("用户名：" + newUser.getName());
-        } else {
-            System.out.println("user == null");
+        for (int i = 0; i < 3; i++) {
+            User newUser = userService.getUser(user);
+            if (newUser != null) {
+                System.out.println("用户名：" + newUser.getName());
+            } else {
+                System.out.println("user == null");
+            }
         }
     }
 

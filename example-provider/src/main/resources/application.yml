@@ -1,6 +1,6 @@
 rpc:
-  serverHost: localhost
-  serverPort: 8081
+  serverHost: xhhhh.cloud
+  serverPort: 8888
   serializer: kryo # 序列化方式
 #  registryConfig:
 #    type: zookeeper # 注册中心类型

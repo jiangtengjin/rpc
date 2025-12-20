@@ -52,6 +52,7 @@ public class ServiceProxy implements InvocationHandler {
             HashMap<String, Object> requestParams = new HashMap<>();
             requestParams.put("methodName", rpcRequest.getMethodName());
             ServiceMetaInfo selectedService = loadBalancer.select(requestParams, serviceList);
+            log.info("selected service: {}", selectedService);
 
             // 发送 TCP 请求
             RpcResponse response = VertxTcpClient.doRequest(rpcRequest, selectedService);
