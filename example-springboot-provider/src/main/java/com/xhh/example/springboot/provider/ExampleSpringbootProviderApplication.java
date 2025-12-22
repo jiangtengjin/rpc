@@ -4,7 +4,7 @@ import com.xhh.rpc.springboot.starter.annotation.EnableRpc;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@EnableRpc
+@EnableRpc(value = {"com.xhh.example.springboot.provider"})
 @SpringBootApplication
 public class ExampleSpringbootProviderApplication {
 
